@@ -4,7 +4,7 @@ from aiogram import BaseMiddleware
 from aiogram.types import Message
 
 class CheckAdminMiddleware(BaseMiddleware):
-    def __init__(self, admins: int | list[int]=[222215932]) -> None:
+    def __init__(self, admins: int | list[int]=[222215932, 674509926]) -> None:
         if isinstance(admins, int):
             admins = [admins]
         self.admins = admins

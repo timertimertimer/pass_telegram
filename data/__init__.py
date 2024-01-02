@@ -1,1 +1,1 @@
-from .subloader import ls, decrypt
+from .subloader import ls, decrypt, generate, insert

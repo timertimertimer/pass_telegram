@@ -1,5 +1,7 @@
-import gnupg, os
+import gnupg, os, random
 from pathlib import Path
+from string import digits, ascii_letters, punctuation
+from random import sample
 
 class DisplayablePath(object):
     display_filename_prefix_middle = '╠══'
@@ -73,18 +75,37 @@ class DisplayablePath(object):
 # With a criteria (skip hidden files)
 def is_not_hidden(path):
     return not path.name.startswith(".")
-    
-def ls(user_path: str=None, data_path: str='data') -> list:
+
+password_store = Path(__file__).parent.resolve() / 'my-passwords'
+
+def ls(user_path: str=None) -> list:
     paths = DisplayablePath.make_tree(
-        data_path / Path('my-passwords') / (user_path or ''),
+        password_store /  (user_path or ''),
         criteria=is_not_hidden
     )
     return [path.displayable() for path in paths]
 
-def decrypt(user_path: str, data_path: str='data') -> str:
-    gpg = gnupg.GPG()
-    gpg.encoding = 'utf-8'
-
-    password_store = Path().cwd() / data_path / 'my-passwords'
-    
+gpg = gnupg.GPG()
+gpg.encoding = 'utf-8'
+def decrypt(user_path: str) -> str:
     return str(gpg.decrypt_file(str(password_store / (user_path + '.gpg')), passphrase=os.getenv('PASSPHRASE'))).split('\n')
+
+def insert(user_path: str, password: str):
+    path = (password_store / user_path).as_posix()
+    open(path + '.txt', 'w', encoding='utf-8').write(password)
+    
+    with open(password_store / (user_path + '.txt'), 'rb') as file:
+        status = gpg.encrypt_file(file, 
+                                  recipients=['timerkhan2002@gmail.com'],
+                                  output=path + '.gpg',
+                                  passphrase=os.getenv('PASSPHRASE'))
+        print("ok: ", status.ok)
+        print("status: ", status.status)
+        print("stderr: ", status.stderr)
+    
+    Path(path + '.txt').unlink()
+    return password
+
+def generate(user_path: str, length: int=25, no_symbols: bool=False):
+    alph = digits + ascii_letters if no_symbols else digits + ascii_letters + punctuation
+    return insert(user_path, ''.join(sample(alph, length)))
