@@ -1,11 +1,12 @@
 import gnupg
 import os
 import random
-from pathlib import Path
+from pathlib import Path, PosixPath
 from string import digits, ascii_letters, punctuation
 from random import sample
 
-password_store = Path(__file__).parent.resolve() / 'my-passwords'
+Path.home()
+password_store = Path.home() / '.password-store'
 gpg = gnupg.GPG()
 gpg.encoding = 'utf-8'
 
@@ -81,16 +82,12 @@ class DisplayablePath(object):
 
 
 # With a criteria (skip hidden files)
-def is_not_hidden(path):
+def is_not_hidden(path: Path):
     return not path.name.startswith(".")
 
 
 def ls(user_path: str = None) -> list:
-    paths = DisplayablePath.make_tree(
-        password_store / (user_path or ''),
-        criteria=is_not_hidden
-    )
-    return [path.displayable() for path in paths]
+    return [path.name for path in (password_store / (user_path or '')).iterdir() if is_not_hidden(path)]
 
 
 def decrypt(user_path: str) -> list[str]:
@@ -125,4 +122,4 @@ def generate(user_path: str, length: int = 25, no_symbols: bool = False):
 
 
 if __name__ == '__main__':
-    print(ls())
+    print(ls('Crypto'))

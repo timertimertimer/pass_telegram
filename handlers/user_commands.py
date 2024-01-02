@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
 import data
 from utils import Pass
@@ -14,9 +14,7 @@ router = Router()
 async def start(message: Message) -> None:
     await message.answer(
         f'Hello <b>{message.from_user.full_name}</b>',
-        reply_markup=fabrics.get_inline_buttons(
-
-        )
+        reply_markup=fabrics.get_inline_buttons(data.ls())
     )
 
 

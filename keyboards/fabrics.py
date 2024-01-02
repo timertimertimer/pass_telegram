@@ -5,11 +5,10 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 class InlineCallbacks(CallbackData, prefix='social'):
     action: str
-    
-    
-def get_inline_buttons(buttons: list[tuple[str, str]]) -> InlineKeyboardMarkup:
+
+
+def get_inline_buttons(buttons: list[str]) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    [builder.button(text=text, callback_data=InlineCallbacks(action=action)) for text, action in buttons[:-1]]
-    builder.button(text=buttons[-1][0], callback_data=InlineCallbacks(action=buttons[-1][1]))
-    builder.adjust(3)
+    [builder.button(text=text, callback_data=InlineCallbacks(action=text)) for text in buttons]
+    builder.adjust(1)
     return builder.as_markup()
