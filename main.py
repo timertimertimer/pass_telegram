@@ -10,6 +10,7 @@ from aiogram import Dispatcher, Bot
 from aiogram.enums import ParseMode
 
 from handlers import user_commands
+from callbacks import main_callbacks
 from middlewares import CheckAdminMiddleware
 
 load_dotenv()
@@ -26,7 +27,10 @@ async def start() -> None:
     dp.message.middleware(CheckAdminMiddleware())
     dp.callback_query.middleware(CallbackAnswerMiddleware())
 
-    dp.include_routers(user_commands.router)
+    dp.include_routers(
+        user_commands.router,
+        main_callbacks.router
+    )
     await dp.start_polling(bot)
 
 

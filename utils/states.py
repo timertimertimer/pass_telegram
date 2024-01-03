@@ -1,4 +1,8 @@
 from aiogram.fsm.state import StatesGroup, State
 
+
 class Pass(StatesGroup):
-    insert = State()
+    selecting = State()
+    add = State()
+    generate = State()
+    generate_input = State()
