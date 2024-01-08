@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from aiogram import Dispatcher, Bot
 from aiogram.enums import ParseMode
 
-from handlers import user_commands
+from handlers import basic_commands, user_commands
 from callbacks import main_callbacks
 from middlewares import CheckAdminMiddleware
 
@@ -28,6 +28,7 @@ async def start() -> None:
     dp.callback_query.middleware(CallbackAnswerMiddleware())
 
     dp.include_routers(
+        basic_commands.router,
         user_commands.router,
         main_callbacks.router
     )
